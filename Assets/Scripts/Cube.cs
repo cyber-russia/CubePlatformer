@@ -14,7 +14,7 @@ public class Cube : MonoBehaviour {
 	bool in_double = false;
 
 
-	const float jump_velocity = 8f;
+	const float jump_velocity = 8.1f;
 
 	const float strafe_velocity = 4f;
 	const float strafe_friction = 10f;
@@ -23,6 +23,37 @@ public class Cube : MonoBehaviour {
 	GameObject coneMarker;
 
 	Vector3 start_coord;
+
+
+	IEnumerator CAnimateJump()
+	{
+		const float half_anim_time = 0.2f;
+		float time = 0;
+
+		Vector3 orig_scale = transform.localScale;
+		Vector3 target_scale = new Vector3(orig_scale.x, orig_scale.y * 0.9f, orig_scale.z);
+
+		//scale to target
+		while (time < half_anim_time)
+		{
+			transform.localScale = Vector3.Lerp( orig_scale, target_scale, time/half_anim_time );
+			time += Time.deltaTime;
+
+			yield return null;
+		}
+
+
+		//scale back
+		while (time >=0)
+		{
+			transform.localScale = Vector3.Lerp(orig_scale, target_scale, time / half_anim_time);
+			time -= Time.deltaTime;
+
+			yield return null;
+		}
+
+	}
+
 
 
 	public void Jump() {
@@ -36,6 +67,7 @@ public class Cube : MonoBehaviour {
 			rbody.velocity = new Vector3(0, jump_velocity, rbody.velocity.z);
 
 			in_air = true;
+			StartCoroutine(CAnimateJump());
 			return;
 		}
 
@@ -69,12 +101,10 @@ public class Cube : MonoBehaviour {
 	}
 
 
-	void Restart()
+	void RestartLevel()
 	{
 		GetComponent<Rigidbody>().velocity = Vector3.zero;
 		transform.position = start_coord;
-
-		Debug.Log("You DEAD!");
 	}
 
 
@@ -111,7 +141,7 @@ public class Cube : MonoBehaviour {
 
 		if (collision.gameObject.CompareTag("enemy"))
 		{
-			Restart();
+			RestartLevel();
 			return;
 		}
 			

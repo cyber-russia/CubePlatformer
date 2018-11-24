@@ -8,6 +8,26 @@ public class PlayerFinish : MonoBehaviour
 	public CubeColor cubeColor = CubeColor.red;
 
 
+
+	IEnumerator CAnimateSnap(Cube cube) 
+	{
+		const float anim_time = 1f;
+		float time = anim_time;
+
+		while (time > 0)
+		{
+			cube.transform.position = Vector3.Lerp(cube.transform.position, transform.position, (anim_time - time) / time);
+			time -= Time.deltaTime;
+
+			yield return 0;
+		}
+
+		//finally apply finish state
+		cube.Finished = true;
+		GameCore.Instance.CheckLevelComplete();
+	}
+
+
 	private void OnTriggerEnter(Collider other)
 	{
 		if (other.CompareTag("Player"))
@@ -15,10 +35,7 @@ public class PlayerFinish : MonoBehaviour
 			Cube cube = other.GetComponent<Cube>();
 
 			if (cube.color == cubeColor)
-			{
-				cube.Finished = true;
-				GameCore.Instance.CheckLevelComplete();
-			}
+				StartCoroutine(CAnimateSnap(cube));
 
 		}
 	}
