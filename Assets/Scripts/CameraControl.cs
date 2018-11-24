@@ -14,12 +14,10 @@ public class CameraControl : MonoBehaviour
 		if (targetCube == null)
 			return;
 
-		float z = Mathf.Lerp(transform.position.z,
-		                     targetCube.transform.position.z, 0.07f);
+		float y = Mathf.Lerp(transform.position.y, targetCube.transform.position.y+2, 0.03f);
+		float z = Mathf.Lerp(transform.position.z, targetCube.transform.position.z, 0.07f);
 
-		transform.position = new Vector3( transform.position.x,
-		                                 transform.position.y,
-		                                 z);	
+		transform.position = new Vector3( transform.position.x, y, z);	
 	}
 
 
